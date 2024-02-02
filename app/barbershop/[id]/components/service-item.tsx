@@ -13,11 +13,15 @@ import {
 } from '@/app/_components/ui/sheet'
 import { Barbershop, Service } from '@prisma/client'
 import { ptBR } from 'date-fns/locale'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
 import { generateDayTimeList } from '../_helpers.ts/hours'
-import { format } from 'date-fns'
+import { format, setHours, setMinutes } from 'date-fns'
+import { SaveBooking } from '../_actions/save-booking'
+import { Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 interface ServiceItemProps {
   service: Service
@@ -31,7 +35,11 @@ const ServiceItem = ({
   barbershop,
 }: ServiceItemProps) => {
   const [date, setDate] = useState<Date | undefined>(undefined)
+  const { data } = useSession()
   const [hour, setHour] = useState<string | undefined>()
+  const [submitIsloading, setSubmitIsloading] = useState(false)
+  const [sheetIsOpen, setSheetIsOpen] = useState(false)
+  const router = useRouter()
 
   const handleDateClick = (date: Date | undefined) => {
     setDate(date)
@@ -48,6 +56,42 @@ const ServiceItem = ({
     }
 
     // TODO: Abrir modal de agendamentos
+  }
+
+  const handleBookingSubmit = async () => {
+    setSubmitIsloading(true)
+    try {
+      if (!hour || !date || !data?.user) {
+        return
+      }
+
+      const dateHour = Number(hour.split(':')[0])
+      const dateMinutes = Number(hour.split(':')[1])
+      const newDate = setMinutes(setHours(date, dateHour), dateMinutes)
+
+      await SaveBooking({
+        serviceId: service.id,
+        barbershopId: barbershop.id,
+        date: newDate,
+        userId: (data.user as any).id,
+      })
+
+      setSheetIsOpen(false)
+      setHour(undefined)
+      setDate(undefined)
+      toast('Reserva realizada com sucesso!', {
+        description: format(newDate, "'Para' dd 'de' MMMM 'às' HH':'mm'.'", {
+          locale: ptBR,
+        }),
+        action: {
+          label: 'Visualizar',
+          onClick: () => router.push('/bookings'),
+        },
+      })
+    } catch (err) {
+      console.log(err)
+    }
+    setSubmitIsloading(true)
   }
 
   const timeList = useMemo(() => {
@@ -78,7 +122,7 @@ const ServiceItem = ({
                 }).format(Number(service.price))}
               </p>
 
-              <Sheet>
+              <Sheet open={sheetIsOpen} onOpenChange={setSheetIsOpen}>
                 <SheetTrigger asChild>
                   <Button onClick={handleBookingClick} variant="secondary">
                     Reservar
@@ -182,7 +226,15 @@ const ServiceItem = ({
                   </div>
 
                   <SheetFooter className="px-5">
-                    <Button disabled={!hour || !date}>Confirmar reserva</Button>
+                    <Button
+                      onClick={handleBookingSubmit}
+                      disabled={!hour || !date || submitIsloading}
+                    >
+                      {submitIsloading && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      )}
+                      Confirmar reserva
+                    </Button>
                   </SheetFooter>
                 </SheetContent>
               </Sheet>
