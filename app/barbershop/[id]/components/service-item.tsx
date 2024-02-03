@@ -164,8 +164,8 @@ const ServiceItem = ({
                   </Button>
                 </SheetTrigger>
 
-                {/* Titulo */}
                 <SheetContent className="p-0">
+                  {/* Titulo */}
                   <SheetHeader className="text-left px-5 py-6 border-b border-solid border-secondary">
                     <SheetTitle>Fazer reserva</SheetTitle>
                   </SheetHeader>
@@ -260,6 +260,7 @@ const ServiceItem = ({
                     </Card>
                   </div>
 
+                  {/* Footer */}
                   <SheetFooter className="px-5">
                     <Button
                       onClick={handleBookingSubmit}
