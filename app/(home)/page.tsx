@@ -39,34 +39,36 @@ export default async function Home() {
     ])
 
   return (
-    <div>
+    <div className=" md:flex md:flex-col md:gap-6 w-screen ">
       <Header />
 
-      <div className="px-5 pt-5">
-        <h2 className="text-xl font-bold">
-          {' '}
-          {session?.user
-            ? `Olá, ${session.user.name?.split(' ')[0]}`
-            : 'Olá, vamos agendar um corte hoje?'}
-        </h2>
-        <p className="capitalize text-sm">
-          {format(new Date(), "EEEE', 'dd 'de' MMMM", {
-            locale: ptBR,
-          })}
-        </p>
+      <div className="md:flex md:pb-8 w-screen">
+        <div className="px-5 pt-5">
+          <h2 className="text-xl font-bold">
+            {' '}
+            {session?.user
+              ? `Olá, ${session.user.name?.split(' ')[0]}`
+              : 'Olá, vamos agendar um corte hoje?'}
+          </h2>
+          <p className="capitalize text-sm">
+            {format(new Date(), "EEEE', 'dd 'de' MMMM", {
+              locale: ptBR,
+            })}
+          </p>
+        </div>
+
+        <div className="px-5 mt-6 md:flex-1">
+          <Search />
+        </div>
       </div>
 
-      <div className="px-5 mt-6">
-        <Search />
-      </div>
-
-      <div className="mt-6">
+      <div className="mt-6 ">
         {confirmedBookings.length > 0 && (
           <div>
             <h2 className="pl-5 text-xs uppercase text-gray-400 font-bold mb-3">
               Agendamentos
             </h2>
-            <div className="flex pb-3 px-5 gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+            <div className="flex md:grid md:grid-cols-2 w-screen pb-3 px-5 gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
               {confirmedBookings.map((booking) => (
                 <BookingItem booking={booking} key={booking.id} />
               ))}

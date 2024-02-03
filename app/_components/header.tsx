@@ -12,8 +12,8 @@ import Link from 'next/link'
 const Header = () => {
   return (
     <header>
-      <Card>
-        <CardContent className="p-5 flex flex-row items-center justify-between">
+      <Card className="mb-16 ">
+        <CardContent className="p-5 flex flex-row items-center justify-between fixed w-screen bg-secondary z-50">
           <Link href="/">
             <Image alt="Foto da logo" src={logo} height={18} width={120} />
           </Link>

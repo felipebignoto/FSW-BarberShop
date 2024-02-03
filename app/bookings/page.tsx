@@ -52,7 +52,7 @@ const BookingPage = async () => {
             <h2 className="text-gray-400 uppercase font-bold text-sm mt-6 mb-3">
               Confirmados
             </h2>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col md:grid md:grid-cols-2 gap-3">
               {confirmedBookings.map((booking) => (
                 <BookingItem booking={booking} key={booking.id} />
               ))}
@@ -66,7 +66,7 @@ const BookingPage = async () => {
             <h2 className="text-gray-400 uppercase font-bold text-sm mt-6 mb-3">
               Finalizados
             </h2>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col md:grid md:grid-cols-2 gap-3">
               {finhsheddBookings.map((booking) => (
                 <BookingItem booking={booking} key={booking.id} />
               ))}
