@@ -39,7 +39,7 @@ export default async function Home() {
           {' '}
           {session?.user
             ? `Olá, ${session.user.name?.split(' ')[0]}`
-            : 'Olá, vamos agendar um corte?'}
+            : 'Olá, vamos agendar um corte hoje?'}
         </h2>
         <p className="capitalize text-sm">
           {format(new Date(), "EEEE', 'dd 'de' MMMM", {
