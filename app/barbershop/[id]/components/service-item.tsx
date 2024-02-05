@@ -20,7 +20,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { generateDayTimeList } from '../_helpers.ts/hours'
 import { addDays, format, setHours, setMinutes } from 'date-fns'
 import { SaveBooking } from '../_actions/save-booking'
-import { Loader2 } from 'lucide-react'
+import { Loader2, LogInIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { getDayBookings } from '../_actions/getDayBookings'
@@ -44,6 +44,10 @@ const ServiceItem = ({
 
   const { data } = useSession()
   const router = useRouter()
+
+  const handleSiginClick = () => {
+    signIn('google')
+  }
 
   useEffect(() => {
     if (!date) {
@@ -150,7 +154,7 @@ const ServiceItem = ({
             <h2 className="font-bold">{service.name}</h2>
             <p className="text-sm text-gray-400">{service.description}</p>
 
-            <div className="flex items-center justify-between mt-3">
+            <div className="grid md:flex items-center justify-between mt-3 ">
               <p className="text-sm font-bold text-primary">
                 {Intl.NumberFormat('pt-BR', {
                   style: 'currency',
@@ -159,26 +163,43 @@ const ServiceItem = ({
               </p>
 
               <Sheet open={sheetIsOpen} onOpenChange={setSheetIsOpen}>
-                <SheetTrigger asChild>
-                  <Button onClick={handleBookingClick} variant="secondary">
-                    Reservar
-                  </Button>
-                </SheetTrigger>
+                {data?.user ? (
+                  <SheetTrigger asChild>
+                    <Button onClick={handleBookingClick} variant="secondary">
+                      Reservar
+                    </Button>
+                  </SheetTrigger>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-2">
+                      <h2>Gostaria de fazer uma reserva?</h2>
+                    </div>
+                    <Button
+                      variant="secondary"
+                      className="w-full justify-start"
+                      onClick={handleSiginClick}
+                    >
+                      <LogInIcon className="mr-2" size={18} />
+                      Fazer login
+                    </Button>
+                  </div>
+                )}
 
-                <SheetContent className="p-0">
+                <SheetContent className="p-0 ">
                   {/* Titulo */}
-                  <SheetHeader className="text-left px-5 py-6 border-b border-solid border-secondary">
+                  <SheetHeader className="text-left px-5 py-6 md:pt-3 pb-2 border-b border-solid border-secondary">
                     <SheetTitle>Fazer reserva</SheetTitle>
                   </SheetHeader>
 
                   {/* Calendario */}
-                  <div className="py-6">
+                  <div className="py-6 md:py-1">
                     <Calendar
                       mode="single"
                       selected={date}
                       onSelect={handleDateClick}
                       fromDate={addDays(new Date(), 1)}
                       locale={ptBR}
+                      className="md:flex justify-center"
                       styles={{
                         head_cell: {
                           width: '100%',
@@ -207,7 +228,7 @@ const ServiceItem = ({
 
                   {/* Mostrar lista de horarios */}
                   {date && (
-                    <div className="flex overflow-x-auto gap-3 py-6 px-5 border-t border-solid border-secondary [&::-webkit-scrollbar]:hidden">
+                    <div className="flex overflow-x-auto gap-3 py-6 md:py-3 px-5 border-t border-solid border-secondary [&::-webkit-scrollbar]:hidden">
                       {timeList.map((time) => (
                         <Button
                           variant={hour === time ? 'default' : 'outline'}
@@ -221,7 +242,7 @@ const ServiceItem = ({
                     </div>
                   )}
                   {/* Mostra info do serviço */}
-                  <div className="py-6 px-5 border-t border-solid border-secondary">
+                  <div className="py- md:py-3 px-5 border-t border-solid border-secondary">
                     <Card>
                       <CardContent className="p-3 gap-3 flex flex-col">
                         <div className="flex justify-between">
